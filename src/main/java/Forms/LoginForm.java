@@ -1,43 +1,79 @@
 package Forms;
 
-import aquality.selenium.core.elements.ElementState;
+import Utilities.RandomUtils;
+import aquality.selenium.elements.ElementType;
 import aquality.selenium.elements.interfaces.IButton;
 import aquality.selenium.elements.interfaces.ILabel;
+import aquality.selenium.elements.interfaces.ILink;
 import aquality.selenium.elements.interfaces.ITextBox;
-import aquality.selenium.forms.Form;
 import org.openqa.selenium.By;
 
-public class LoginForm extends Form{
+import java.util.List;
+
+public class LoginForm extends BaseForm {
 
     public LoginForm() {
-        super(By.id("index_email"), "Login input");
+        super(By.xpath("//input[@placeholder = 'Choose Password']"),
+                "LoginForm");
     }
 
-    private final ITextBox loginInput = getElementFactory().getTextBox(getLocator(), "Login input");
+    private final ITextBox password = getElementFactory().getTextBox(getLocator(), "InputPassw");
 
-    private final ITextBox passwordInput = getElementFactory().getTextBox(By.id("index_pass"), "Password input");
+    private final ITextBox email = getElementFactory().getTextBox(By.xpath("//input[@placeholder = 'Your email']"),
+            "InputEmail");
 
-    private final IButton loginButton = getElementFactory().getButton(By.id("index_login_button"), "Login button");
+    private final ITextBox domain = getElementFactory().getTextBox(By.xpath("//input[@placeholder = 'Domain']"),
+            "InputDomain");
 
-    private final By captchaLocator = By.className("captcha");
+    private final ILabel LabelCheckBox = getElementFactory().getLabel(By.xpath("//span[@class = 'checkbox__box']"),
+            "Checkbox");
 
-    public void enterLogin(String login){
-        loginInput.sendKeys(login);
+    private final IButton dropdownButton = getElementFactory().getButton(By.className("dropdown__header"), "dropdownLabel");
+
+    private final ILink NextButton = getElementFactory().getLink(By.className("button--secondary"), "NextButton");
+
+    private final By dropdownListLocator = By.className("dropdown__list-item");
+
+    public final CookieForm cookieForm = new CookieForm();
+
+    public void EnterEmail(String email) {
+        this.email.clearAndType(email);
     }
 
-
-
-    public void enterPass(String pass){
-        passwordInput.sendKeys(pass);
+    public void EnterPassword(String passw) {
+        password.clearAndType(passw);
     }
 
-    public void login(){
-        loginButton.clickAndWait();
-        ILabel captchaLabel = getElementFactory().getLabel(captchaLocator, "Captcha", ElementState.EXISTS_IN_ANY_STATE);
-        if (captchaLabel.state().isDisplayed()){
-            captchaLabel.state().waitForNotDisplayed();
-        }
+    public void EnterDomain(String word) {
+        domain.clearAndType(word);
     }
+
+    public void CheckBoxClick() {
+        LabelCheckBox.click();
+    }
+
+    protected void OpenDropdownList() {
+        dropdownButton.click();
+    }
+
+    public void ChosseRandomDomain() {
+        OpenDropdownList();
+        List<ILabel> dropdownList = getElementFactory().findElements(dropdownListLocator, ElementType.LABEL);
+        int index = RandomUtils.rndInt(0, dropdownList.size());
+        dropdownList.get(index).click();
+    }
+
+    public void NextClick() {
+        NextButton.clickAndWait();
+    }
+
 }
+
+
+
+
+
+
+
 
 
